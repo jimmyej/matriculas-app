@@ -38,13 +38,9 @@ public class StudentServiceImpl implements StudentService {
 
     public boolean deleteStudent(Long id) {
         boolean deleted = false;
-        try {
-            if(id != null){
-                studentRepository.deleteById(id);
-                deleted = true;
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
+        if(studentRepository.existsById(id)){
+            studentRepository.deleteById(id);
+            deleted = true;
         }
         return deleted;
     }
