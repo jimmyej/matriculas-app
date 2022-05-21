@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,9 +40,9 @@ public class StudentControllerTest {
     @MockBean
     StudentRepository studentRepository;
 
-    Student student1 = new Student(1l,"Angel", "Felix", "DNI", "12345678", LocalDate.of(1999,5,9), "angel.felix@gmail.com", true);
-    Student student2 = new Student(2l,"Jimmy", "Sanchez", "DNI", "87654321", LocalDate.of(1987,1,1), "angel.@gmail.com", true);
-    Student student3 = new Student(3l,"Tony", "Sanchez", "DNI", "12312312", LocalDate.of(1996,2,12), "jimmy.sanchez@gmail.com", true);
+    Student student1 = new Student(1L,"Angel", "Felix", "DNI", "12345678", LocalDate.of(1999,5,9), "angel.felix@gmail.com", true);
+    Student student2 = new Student(2L,"Jimmy", "Sanchez", "DNI", "87654321", LocalDate.of(1987,1,1), "angel.@gmail.com", true);
+    Student student3 = new Student(3L,"Tony", "Sanchez", "DNI", "12312312", LocalDate.of(1996,2,12), "jimmy.sanchez@gmail.com", true);
 
     @Test
     public void getStudents_success() throws Exception {
@@ -101,7 +100,7 @@ public class StudentControllerTest {
 
     @Test
     public void saveStudent_success() throws Exception {
-        Student newStudent = new Student(0l,"Test", "Test", "DNI", "11111111", LocalDate.of(2020,5,9), "test.test@gmail.com", true);
+        Student newStudent = new Student(0L,"Test", "Test", "DNI", "11111111", LocalDate.of(2020,5,9), "test.test@gmail.com", true);
 
         Mockito.when(studentRepository.save(eq(newStudent))).thenReturn(newStudent);
 
@@ -118,7 +117,7 @@ public class StudentControllerTest {
 
     @Test
     public void editStudent_success() throws Exception {
-        Student newStudent = new Student(5l,"Test", "Test", "DNI", "22222222", LocalDate.of(2020,5,9), "test.test@gmail.com", true);
+        Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", LocalDate.of(2020,5,9), "test.test@gmail.com", true);
 
         Mockito.when(studentRepository.existsById(eq(5L))).thenReturn(true);
         Mockito.when(studentRepository.save(eq(newStudent))).thenReturn(newStudent);
@@ -136,7 +135,7 @@ public class StudentControllerTest {
 
     @Test
     public void editStudent_fail() throws Exception {
-        Student newStudent = new Student(5l,"Test", "Test", "DNI", "22222222", LocalDate.of(2020,5,9), "test.test@gmail.com", true);
+        Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", LocalDate.of(2020,5,9), "test.test@gmail.com", true);
 
         Mockito.when(studentRepository.existsById(eq(5L))).thenReturn(false);
         Mockito.when(studentRepository.save(eq(newStudent))).thenReturn(null);
