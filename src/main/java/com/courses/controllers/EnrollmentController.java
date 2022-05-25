@@ -1,8 +1,11 @@
 package com.courses.controllers;
 
 import com.courses.entities.Enrollment;
+import com.courses.entities.EnrollmentCourse;
+import com.courses.entities.ids.EnrollmentCourseId;
 import com.courses.services.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -40,7 +43,28 @@ public class EnrollmentController {
     }
 
     @GetMapping(value = "/dates/{enrollmentDate}")
-    List<Enrollment> getEnrollmentsByDate(@PathVariable LocalDate enrollmentDate){
+    List<Enrollment> getEnrollmentsByDate(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enrollmentDate){
         return enrollmentService.getEnrollmentsByDate(enrollmentDate);
+    }
+
+    @GetMapping(value = "/details/{enrollmentId}/courses/{courseId}")
+    EnrollmentCourse getDetailById(@PathVariable Long enrollmentId, @PathVariable Long courseId) {
+        EnrollmentCourseId id = new EnrollmentCourseId(enrollmentId, courseId);
+        return enrollmentService.getDetailById(id);
+    }
+
+    @PostMapping(value = "/details")
+    EnrollmentCourse saveDetail(@RequestBody EnrollmentCourse detail) {
+        return enrollmentService.saveDetail(detail);
+    }
+
+    @PostMapping(value = "/details/batch")
+    List<EnrollmentCourse> saveDetails(@RequestBody List<EnrollmentCourse> details) {
+        return enrollmentService.saveDetails(details);
+    }
+
+    @DeleteMapping(value = "/details/{enrollmentId}/courses/{courseId}")
+    boolean deleteDetailById(@PathVariable Long enrollmentId, @PathVariable Long courseId) {
+        return enrollmentService.deleteDetailById(new EnrollmentCourseId(enrollmentId, courseId));
     }
 }

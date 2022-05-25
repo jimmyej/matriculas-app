@@ -63,7 +63,7 @@
 				<configuration>
 					<excludes>
 						<exclude>com/courses/EnrollmentManagementAppApplication.class</exclude>
-						<exclude>com/courses/entities/*.*</exclude>
+						<exclude>com/courses/entities/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
