@@ -54,8 +54,7 @@ public class CourseControllerTest {
                         .get("/v1/courses")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.hasSize(3)))
-                .andExpect(jsonPath("$[1].name", Matchers.is("Python")));
+                .andExpect(jsonPath("$", Matchers.hasSize(3)));
     }
 
     @Test
