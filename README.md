@@ -3,7 +3,7 @@ This Microservice contains the following endpoints:
 
 - Students
 - Courses
-- Enrolments
+- Enrollments
 
 ### Tools
 - Java 11
