@@ -8,4 +8,7 @@ spring:
     properties:
       hibernate:
         ddl-auto: create
-        default_schema: enrollmentdb-prod
+        default_schema: enrollmentdbprod
+
+server:
+  port: 9090
