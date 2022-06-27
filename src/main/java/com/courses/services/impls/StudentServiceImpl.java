@@ -16,7 +16,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getStudents() {
-        return studentRepository.findByStatus(true);
+        return studentRepository.findAll();
+        //return studentRepository.findByStatus(true);
     }
 
     public Student getStudentById(Long id) {
