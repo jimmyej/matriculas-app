@@ -14,9 +14,12 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    @Override
     public List<Student> getStudents() {
-        return studentRepository.findAll();
+        return studentRepository.findByOrderByUpdatedAtDesc();
+    }
+
+    public List<Student> getActiveStudents() {
+        return studentRepository.findByStatus(true);
     }
 
     public Student getStudentById(Long id) {
@@ -39,7 +42,9 @@ public class StudentServiceImpl implements StudentService {
     public boolean deleteStudent(Long id) {
         boolean deleted = false;
         if(studentRepository.existsById(id)){
-            studentRepository.deleteById(id);
+            Student student = studentRepository.findById(id).get();
+            student.setStatus(false);
+            studentRepository.save(student);
             deleted = true;
         }
         return deleted;
