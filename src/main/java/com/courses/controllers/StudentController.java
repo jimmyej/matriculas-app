@@ -18,6 +18,11 @@ public class StudentController {
         return studentService.getStudents();
     }
 
+    @GetMapping(value = "/active")
+    List<Student> getActiveStudents(){
+        return studentService.getActiveStudents();
+    }
+
     @GetMapping(value = "/{id}")
     Student getStudentById(@PathVariable Long id){
         return studentService.getStudentById(id);

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,4 +27,10 @@ public class Student {
     private Date birthDate;
     private String email;
     private boolean status;
+    @Column(updatable = false, nullable = false)
+    @CreationTimestamp
+    private Date createdAt;
+    @Column(nullable = false)
+    @UpdateTimestamp
+    private Date updatedAt;
 }

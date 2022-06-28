@@ -14,10 +14,12 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    @Override
     public List<Student> getStudents() {
-        return studentRepository.findAll();
-        //return studentRepository.findByStatus(true);
+        return studentRepository.findByOrderByUpdatedAtDesc();
+    }
+
+    public List<Student> getActiveStudents() {
+        return studentRepository.findByStatus(true);
     }
 
     public Student getStudentById(Long id) {
