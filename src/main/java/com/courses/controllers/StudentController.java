@@ -10,17 +10,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/students")
 public class StudentController {
+
     @Autowired
     private StudentService studentService;
 
     @GetMapping(value = "")
-    List<Student> getStudents(){
-        return studentService.getStudents();
-    }
-
-    @GetMapping(value = "/active")
-    List<Student> getActiveStudents(){
-        return studentService.getActiveStudents();
+    List<Student> getStudents(@RequestParam(required=false) boolean showAll){
+        return showAll ? studentService.getStudents() : studentService.getActiveStudents();
     }
 
     @GetMapping(value = "/{id}")
