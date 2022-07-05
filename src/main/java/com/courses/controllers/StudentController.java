@@ -4,6 +4,7 @@ import com.courses.entities.Student;
 import com.courses.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -47,5 +48,10 @@ public class StudentController {
     @GetMapping(value = "/docs/types/{docType}")
     List<Student> getStudentsByDocType(@PathVariable String docType){
         return studentService.getStudentsByDocType(docType);
+    }
+
+    @PostMapping(value = "/{id}/upload")
+    Student uploadPhoto(@PathVariable Long id, @RequestParam MultipartFile file){
+        return studentService.uploadPhoto(id, file);
     }
 }

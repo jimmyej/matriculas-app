@@ -1,6 +1,7 @@
 package com.courses.services;
 
 import com.courses.entities.Student;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface StudentService {
 
     Student getStudentByDocNumber(String docNumber);
     List<Student> getStudentsByDocType(String docType);
+
+    Student uploadPhoto(Long id, MultipartFile image);
 }

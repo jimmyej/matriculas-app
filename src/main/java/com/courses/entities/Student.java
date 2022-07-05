@@ -33,4 +33,5 @@ public class Student {
     @Column(nullable = false)
     @UpdateTimestamp
     private Date updatedAt;
+    private String urlPhoto;
 }
