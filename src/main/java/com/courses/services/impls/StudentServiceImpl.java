@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -74,10 +73,13 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findById(id).get();
         if (student != null) {
             try {
-                File file = convertMultiPartToFile(image);
-                Map uploadResult = mediaConfig.cloudinaryConfig().uploader().upload(file, ObjectUtils.asMap("resource_type", "auto"));
+                File file = Files.createTempFile("temp", image.getOriginalFilename()).toFile();
+                image.transferTo(file);
+
+                Map uploadResult = mediaConfig.cloudinaryConfig().uploader().upload(file, ObjectUtils.emptyMap());
                 JSONObject json = new JSONObject(uploadResult);
                 String url = json.getString("url");
+
                 student.setUrlPhoto(url);
                 studentWithPhoto = studentRepository.save(student);
             } catch (Exception e) {
@@ -87,13 +89,5 @@ public class StudentServiceImpl implements StudentService {
             return null;
         }
         return studentWithPhoto;
-    }
-
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
     }
 }
