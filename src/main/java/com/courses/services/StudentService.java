@@ -16,5 +16,5 @@ public interface StudentService {
     Student getStudentByDocNumber(String docNumber);
     List<Student> getStudentsByDocType(String docType);
 
-    Student uploadPhoto(Long id, MultipartFile image);
+    Student uploadPhoto(Long id, MultipartFile image, String token);
 }

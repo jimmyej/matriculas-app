@@ -34,4 +34,5 @@ public class Student {
     @UpdateTimestamp
     private Date updatedAt;
     private String urlPhoto;
+    private String publicId;
 }

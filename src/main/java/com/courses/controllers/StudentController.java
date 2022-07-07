@@ -50,8 +50,8 @@ public class StudentController {
         return studentService.getStudentsByDocType(docType);
     }
 
-    @PostMapping(value = "/{id}/upload")
-    Student uploadPhoto(@PathVariable Long id, @RequestParam MultipartFile file){
-        return studentService.uploadPhoto(id, file);
+    @PostMapping(value = {"/{id}/upload", "/{id}/upload/{token}"})
+    Student uploadPhoto(@PathVariable Long id, @PathVariable(required = false) String token,@RequestParam MultipartFile file){
+        return studentService.uploadPhoto(id, file, token);
     }
 }
