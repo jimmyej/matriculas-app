@@ -27,9 +27,11 @@ public class Student {
     private Date birthDate;
     private String email;
     private boolean status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "America/Lima")
     @Column(updatable = false, nullable = false)
     @CreationTimestamp
     private Date createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "America/Lima")
     @Column(nullable = false)
     @UpdateTimestamp
     private Date updatedAt;
