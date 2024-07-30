@@ -37,9 +37,9 @@ public class StudentControllerTest {
     @MockBean
     StudentRepository studentRepository;
 
-    Student student1 = new Student(1L,"Angel", "Felix", "DNI", "12345678", new Date(1999,5,9), "angel.felix@gmail.com", true, new Date(), new Date());
-    Student student2 = new Student(2L,"Jimmy", "Sanchez", "DNI", "87654321", new Date(1987,1,1), "angel.@gmail.com", true, new Date(), new Date());
-    Student student3 = new Student(3L,"Tony", "Sanchez", "DNI", "12312312", new Date(1996,2,12), "jimmy.sanchez@gmail.com", true, new Date(), new Date());
+    Student student1 = new Student(1L,"Angel", "Felix", "DNI", "12345678", new Date(1999,5,9), "angel.felix@gmail.com", true, new Date(), new Date(), "", "" );
+    Student student2 = new Student(2L,"Jimmy", "Sanchez", "DNI", "87654321", new Date(1987,1,1), "angel.@gmail.com", true, new Date(), new Date(), "", "");
+    Student student3 = new Student(3L,"Tony", "Sanchez", "DNI", "12312312", new Date(1996,2,12), "jimmy.sanchez@gmail.com", true, new Date(), new Date(), "", "");
 
 /*    Student student1 = new Student(1L,"Angel", "Felix", "DNI", "12345678", LocalDate.of(1999,5,9), "angel.felix@gmail.com", true);
     Student student2 = new Student(2L,"Jimmy", "Sanchez", "DNI", "87654321", LocalDate.of(1987,1,1), "angel.@gmail.com", true);
@@ -101,7 +101,7 @@ public class StudentControllerTest {
 
     @Test
     public void saveStudent_success() throws Exception {
-        Student newStudent = new Student(0L,"Test", "Test", "DNI", "11111111", new Date(2020,5,9), "test.test@gmail.com", true, new Date(), new Date());
+        Student newStudent = new Student(0L,"Test", "Test", "DNI", "11111111", new Date(2020,5,9), "test.test@gmail.com", true, new Date(), new Date(), "", "");
 
         Mockito.when(studentRepository.save(eq(newStudent))).thenReturn(newStudent);
 
@@ -118,7 +118,7 @@ public class StudentControllerTest {
 
     @Test
     public void editStudent_success() throws Exception {
-        Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", new Date(2020,5,9), "test.test@gmail.com", true, new Date(), new Date());
+        Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", new Date(2020,5,9), "test.test@gmail.com", true, new Date(), new Date(), "", "");
 
         Mockito.when(studentRepository.existsById(eq(5L))).thenReturn(true);
         Mockito.when(studentRepository.save(eq(newStudent))).thenReturn(newStudent);
@@ -136,7 +136,7 @@ public class StudentControllerTest {
 
     @Test
     public void editStudent_fail() throws Exception {
-        Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", new Date(2020,5,9), "test.test@gmail.com", true, new Date(), new Date());
+        Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", new Date(2020,5,9), "test.test@gmail.com", true, new Date(), new Date(), "", "");
 
         Mockito.when(studentRepository.existsById(eq(5L))).thenReturn(false);
         Mockito.when(studentRepository.save(eq(newStudent))).thenReturn(null);
