@@ -1,6 +1,5 @@
-package com.courses.controller;
+package com.courses.controllers;
 
-import com.courses.controllers.CourseController;
 import com.courses.entities.Course;
 import com.courses.repositories.CourseRepository;
 import com.courses.services.impls.CourseServiceImpl;

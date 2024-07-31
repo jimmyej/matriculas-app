@@ -4,13 +4,13 @@ import com.courses.entities.Course;
 import com.courses.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 @RestController
 @RequestMapping("/v1/courses")
 public class CourseController {
     @Autowired
-    private CourseService courseService;
+    CourseService courseService;
 
     @GetMapping(value = "")
     List<Course> getCourses(){

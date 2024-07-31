@@ -10,6 +10,7 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
     Student findByDocNumber(String docNumber);
     List<Student> findByDocType(String docType);
     List<Student> findByStatus(boolean status);
-
     List<Student> findByOrderByUpdatedAtDesc();
+    boolean existsByDocNumber(String docNumber);
+    boolean existsByEmail(String email);
 }

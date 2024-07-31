@@ -1,9 +1,8 @@
 package com.courses.services.impls;
 
-import com.cloudinary.utils.ObjectUtils;
-import com.courses.configs.MediaConfig;
 import com.courses.entities.Student;
 import com.courses.repositories.StudentRepository;
+import com.courses.services.CloudinaryService;
 import com.courses.services.StudentService;
 import com.courses.services.specs.CommonSpecification;
 import com.courses.services.specs.SpecificationHelper;
@@ -17,19 +16,18 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
 
     @Autowired
-    private StudentRepository studentRepository;
+    StudentRepository studentRepository;
 
     @Autowired
-    private MediaConfig mediaConfig;
+    CloudinaryService cloudinaryService;
 
     public Page<Student> getAllStudents(String filters, String sorts, Integer page, Integer size) {
         CommonSpecification<Student> specifications = SpecificationHelper.makeSpecifications(filters);
@@ -50,11 +48,21 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public Student getStudentById(Long id) {
-        return studentRepository.findById(id).get();
+        Optional<Student> student = studentRepository.findById(id);
+        if(student.isPresent()){
+            return studentRepository.findById(id).get();
+        } else {
+            return null;
+        }
     }
 
     public Student saveStudent(Student student) {
-        return studentRepository.save(student);
+        boolean existsByDocNumber = studentRepository.existsByDocNumber(student.getDocNumber());
+        boolean existsByEmail = studentRepository.existsByEmail(student.getEmail());
+        if(!existsByDocNumber && !existsByEmail) {
+            return studentRepository.save(student);
+        }
+        return null;
     }
 
     public Student editStudent(Long id, Student student) {
@@ -87,25 +95,21 @@ public class StudentServiceImpl implements StudentService {
 
     public Student uploadPhoto(Long id, MultipartFile image, String publicId){
         Student studentWithPhoto = null;
-        Student student = studentRepository.findById(id).get();
-        if (student != null) {
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isPresent()) {
             try {
-                File file = Files.createTempFile("temp", image.getOriginalFilename()).toFile();
-                image.transferTo(file);
-
                 if(publicId!= null && !publicId.isEmpty()){
-                    mediaConfig.cloudinaryConfig().uploader().destroy(publicId, ObjectUtils.emptyMap());
+                    cloudinaryService.delete(publicId);
                 }
 
-                Map uploadResult = mediaConfig.cloudinaryConfig().uploader().upload(file, ObjectUtils.emptyMap());
+                Map uploadResult = cloudinaryService.upload(image);
                 JSONObject json = new JSONObject(uploadResult);
                 String url = json.getString("url");
                 String publicIdValue = json.getString("public_id");
-                file.delete();
 
-                student.setUrlPhoto(url);
-                student.setPublicId(publicIdValue);
-                studentWithPhoto = studentRepository.save(student);
+                student.get().setUrlPhoto(url);
+                student.get().setPublicId(publicIdValue);
+                studentWithPhoto = studentRepository.save(student.get());
             } catch (Exception e) {
                 return null;
             }

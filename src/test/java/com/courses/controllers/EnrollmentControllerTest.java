@@ -1,6 +1,5 @@
-package com.courses.controller;
+package com.courses.controllers;
 
-import com.courses.controllers.EnrollmentController;
 import com.courses.entities.Enrollment;
 import com.courses.entities.EnrollmentCourse;
 import com.courses.entities.ids.EnrollmentCourseId;
