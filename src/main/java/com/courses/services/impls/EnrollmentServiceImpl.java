@@ -16,10 +16,10 @@ import java.util.List;
 public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    EnrollmentRepository enrollmentRepository;
 
     @Autowired
-    private EnrollmentCourseRepository enrollmentCourseRepository;
+    EnrollmentCourseRepository enrollmentCourseRepository;
 
     public List<Enrollment> getEnrollments() {
         return enrollmentRepository.findAll();

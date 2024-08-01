@@ -20,7 +20,9 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
     }
 
-    public Map delete(String publicId) throws IOException {
-        return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+    public void delete(String publicId) throws IOException {
+        if(publicId!= null && !publicId.isEmpty()){
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        }
     }
 }

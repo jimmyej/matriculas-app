@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/v1/enrollments")
 public class EnrollmentController {

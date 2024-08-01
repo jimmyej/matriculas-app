@@ -6,6 +6,7 @@ import com.courses.services.CloudinaryService;
 import com.courses.services.StudentService;
 import com.courses.services.specs.CommonSpecification;
 import com.courses.services.specs.SpecificationHelper;
+import com.courses.utils.CommonConstants;
 import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,21 +40,21 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findAll(specifications, pageable);
     }
 
-    public List<Student> getStudents() {
-        return studentRepository.findByOrderByUpdatedAtDesc();
-    }
-
-    public List<Student> getActiveStudents() {
-        return studentRepository.findByStatus(true);
+    public List<Student> getStudents(String status) {
+        if(status != null){
+            boolean activeStudents = status.equals(CommonConstants.ACTIVATED.name());
+            return studentRepository.findByStatusOrderByUpdatedAtDesc(activeStudents);
+        } else {
+            return studentRepository.findByOrderByUpdatedAtDesc();
+        }
     }
 
     public Student getStudentById(Long id) {
-        Optional<Student> student = studentRepository.findById(id);
-        if(student.isPresent()){
+        boolean existsById = studentRepository.existsById(id);
+        if(existsById) {
             return studentRepository.findById(id).get();
-        } else {
-            return null;
         }
+        return null;
     }
 
     public Student saveStudent(Student student) {
@@ -98,10 +99,7 @@ public class StudentServiceImpl implements StudentService {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isPresent()) {
             try {
-                if(publicId!= null && !publicId.isEmpty()){
-                    cloudinaryService.delete(publicId);
-                }
-
+                cloudinaryService.delete(publicId);
                 Map uploadResult = cloudinaryService.upload(image);
                 JSONObject json = new JSONObject(uploadResult);
                 String url = json.getString("url");

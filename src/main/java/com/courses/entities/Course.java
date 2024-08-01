@@ -1,13 +1,13 @@
 package com.courses.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,5 +20,6 @@ public class Course {
     private String name;
     private String acronym;
     private LocalDate duration;
-    private boolean Status;
+    private LocalDateTime updatedAt;
+    private boolean status;
 }

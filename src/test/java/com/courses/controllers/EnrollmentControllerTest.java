@@ -119,7 +119,7 @@ public class EnrollmentControllerTest {
         Enrollment newEnrollment = new Enrollment(5L,10L, LocalDate.of(2022,5,23),true);
 
         Mockito.when(enrollmentRepository.existsById(eq(5L))).thenReturn(true);
-        Mockito.when(enrollmentRepository.save(eq(newEnrollment))).thenReturn(newEnrollment);
+        Mockito.when(enrollmentRepository.save(newEnrollment)).thenReturn(newEnrollment);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/v1/enrollments/5")
                 .contentType(MediaType.APPLICATION_JSON)

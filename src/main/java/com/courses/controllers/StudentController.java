@@ -1,6 +1,7 @@
 package com.courses.controllers;
 
 import com.courses.entities.Student;
+import com.courses.handlers.ResponseHandler;
 import com.courses.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,12 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/v1/students")
 public class StudentController {
 
     @Autowired
-    private StudentService studentService;
+    StudentService studentService;
 
     @GetMapping(
         value = {
@@ -32,27 +34,27 @@ public class StudentController {
     ResponseEntity<Page<Student>> getAllStudents(@PathVariable(required = false) String filters, @PathVariable(required = false) String sorts, @PathVariable Integer page, @PathVariable Integer size){
         Page<Student> students =  studentService.getAllStudents(filters, sorts, page, size);
         if(students.get().findAny().isEmpty()){
-            return new ResponseEntity<>(students, HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
     @GetMapping(value = "")
-    ResponseEntity<List<Student>> getStudents(@RequestParam(required=false) boolean showAll){
-        List<Student> students = showAll ? studentService.getStudents() : studentService.getActiveStudents();
+    ResponseEntity<Object> getStudents(@RequestParam(required=false) String status){
+        List<Student> students = studentService.getStudents(status);
         if(students.isEmpty()){
-            return new ResponseEntity<>(students, HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(students, HttpStatus.OK);
+        return ResponseHandler.generateResponse(students, "Success", HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
     ResponseEntity<Student> getStudentById(@PathVariable Long id){
         Student student = studentService.getStudentById(id);
         if(student == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(student, HttpStatus.OK);
+        return ResponseEntity.ok().body(student);
     }
 
     //TODO refactor this endpoint
@@ -60,7 +62,7 @@ public class StudentController {
     ResponseEntity<Student> saveStudent(@RequestBody Student student){
         Student newStudent = studentService.saveStudent(student);
         if(newStudent == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
         return new ResponseEntity<>(newStudent, HttpStatus.CREATED);
     }
@@ -70,44 +72,44 @@ public class StudentController {
     ResponseEntity<Student> editStudent(@PathVariable Long id, @RequestBody Student student){
         Student newStudent = studentService.editStudent(id, student);
         if(newStudent == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(newStudent, HttpStatus.OK);
+        return ResponseEntity.ok().body(newStudent);
     }
 
     @DeleteMapping(value = "/{id}")
     ResponseEntity<Boolean> deleteStudent(@PathVariable Long id){
         boolean isDeleted = studentService.deleteStudent(id);
         if(!isDeleted){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(value = "/docs/numbers/{docNumber}")
     ResponseEntity<Student> getStudentByDocNumber(@PathVariable String docNumber){
         Student student = studentService.getStudentByDocNumber(docNumber);
         if(student == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(student, HttpStatus.OK);
+        return ResponseEntity.ok().body(student);
     }
 
     @GetMapping(value = "/docs/types/{docType}")
     ResponseEntity<List<Student>> getStudentsByDocType(@PathVariable String docType){
         List<Student> students = studentService.getStudentsByDocType(docType);
         if(students.isEmpty()){
-            return new ResponseEntity<>(students, HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(students, HttpStatus.OK);
+        return ResponseEntity.ok().body(students);
     }
 
     @PostMapping(value = {"/{id}/upload", "/{id}/upload/{publicId}"})
     ResponseEntity<Student> uploadPhoto(@PathVariable Long id, @PathVariable(required = false) String publicId, @RequestParam MultipartFile file){
         Student student = studentService.uploadPhoto(id, file, publicId);
         if(student == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(student, HttpStatus.OK);
+        return ResponseEntity.ok().body(student);
     }
 }

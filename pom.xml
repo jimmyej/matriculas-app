@@ -90,6 +90,7 @@
 						<exclude>com/courses/services/specs/**</exclude>
 						<exclude>com/courses/entities/**</exclude>
 						<exclude>com/courses/configs/**</exclude>
+						<exclude>com/courses/handlers/**</exclude>
 						<exclude>com/courses/utils/**</exclude>
 					</excludes>
 				</configuration>
