@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface EnrollmentService {
-    List<Enrollment> getEnrollments();
+    List<Enrollment> getEnrollments(String status);
     Enrollment getEnrollmentById(Long id);
     Enrollment saveEnrollment(Enrollment enrollment);
     Enrollment editEnrollment(Long id, Enrollment enrollment);

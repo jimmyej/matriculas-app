@@ -76,7 +76,7 @@ class StudentControllerTest {
         Mockito.when(studentRepository.findByOrderByUpdatedAtDesc()).thenReturn(students);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/v1/students?showAll=true")
+                        .get("/v1/students")
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
@@ -89,7 +89,7 @@ class StudentControllerTest {
         Mockito.when(studentRepository.findByOrderByUpdatedAtDesc()).thenReturn(Lists.list());
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/v1/students?showAll=true")
+                        .get("/v1/students")
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isNoContent());

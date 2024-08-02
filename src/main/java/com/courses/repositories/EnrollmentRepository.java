@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
-
-    List<Enrollment> findByEnrollmentDate(LocalDate enrollmentDate);
+    List<Enrollment> findByOrderByEnrollmentDateDesc();
+    List<Enrollment> findByStatusOrderByEnrollmentDateDesc(boolean status);
+    List<Enrollment> findByEnrollmentDateOrderByEnrollmentDateDesc(LocalDate enrollmentDate);
+    boolean existsByStudentIdAndStatus(Long studentId, boolean status);
 }
