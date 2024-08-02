@@ -3,6 +3,7 @@ package com.courses.services.impls;
 import com.courses.entities.Course;
 import com.courses.repositories.CourseRepository;
 import com.courses.services.CourseService;
+import com.courses.utils.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,22 +15,31 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    @Override
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
+    public List<Course> getCourses(String status) {
+        if(status != null) {
+            boolean activeStudents = status.equals(CommonConstants.ACTIVATED.name());
+            return courseRepository.findByStatusOrderByUpdatedAtDesc(activeStudents);
+        } else {
+            return courseRepository.findByOrderByUpdatedAtDesc();
+        }
     }
 
-    @Override
     public Course getCourseById(Long id) {
-        return courseRepository.findById(id).get();
+        boolean exists = courseRepository.existsById(id);
+        if(exists){
+            return courseRepository.findById(id).get();
+        }
+        return null;
     }
 
-    @Override
     public Course saveCourse(Course course) {
-        return courseRepository.save(course);
+        boolean existsByName = courseRepository.existsByName(course.getName());
+        if(!existsByName){
+            return courseRepository.save(course);
+        }
+        return null;
     }
 
-    @Override
     public Course editCourse(Long id, Course course) {
         boolean exists = courseRepository.existsById(id);
         if(exists){
@@ -39,22 +49,18 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    @Override
     public boolean deleteCourse(Long id) {
         boolean deleted = false;
         if(courseRepository.existsById(id)){
-            courseRepository.deleteById(id);
+            Course course = courseRepository.findById(id).get();
+            course.setStatus(false);
+            courseRepository.save(course);
             deleted = true;
         }
         return deleted;
     }
 
-    @Override
     public Course getCourseByAcronym(String acronym) {
         return courseRepository.findByAcronym(acronym);
     }
-
-
-
-
 }

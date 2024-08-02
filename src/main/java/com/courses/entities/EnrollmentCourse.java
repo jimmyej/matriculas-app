@@ -2,15 +2,15 @@ package com.courses.entities;
 
 
 import com.courses.entities.ids.EnrollmentCourseId;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -18,4 +18,12 @@ import javax.persistence.Table;
 public class EnrollmentCourse {
     @EmbeddedId
     private EnrollmentCourseId id;
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnrollmentCourse that = (EnrollmentCourse) o;
+        return Objects.equals(id, that.id);
+    }
+
 }
