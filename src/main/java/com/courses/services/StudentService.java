@@ -8,8 +8,7 @@ import java.util.List;
 
 public interface StudentService {
     Page<Student> getAllStudents(String filters, String sorts, Integer page, Integer size);
-    List<Student> getStudents();
-    List<Student> getActiveStudents();
+    List<Student> getStudents(String status);
     Student getStudentById(Long id);
     Student saveStudent(Student student);
     Student editStudent(Long id, Student student);

@@ -6,11 +6,14 @@ import com.courses.entities.ids.EnrollmentCourseId;
 import com.courses.services.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/v1/enrollments")
 public class EnrollmentController {
@@ -18,53 +21,93 @@ public class EnrollmentController {
     private EnrollmentService enrollmentService;
 
     @GetMapping(value = "")
-    List<Enrollment> getEnrollments(){
-        return enrollmentService.getEnrollments();
+    ResponseEntity<List<Enrollment>> getEnrollments(@RequestParam(required=false) String status){
+        List<Enrollment> enrollments = enrollmentService.getEnrollments(status);
+        if(enrollments.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(enrollments);
     }
 
     @GetMapping(value = "/{id}")
-    Enrollment getEnrollmentById(@PathVariable Long id){
-        return enrollmentService.getEnrollmentById(id);
+    ResponseEntity<Enrollment> getEnrollmentById(@PathVariable Long id){
+        Enrollment enrollment = enrollmentService.getEnrollmentById(id);
+        if(enrollment == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(enrollment);
     }
 
     @PostMapping(value = "")
-    Enrollment saveEnrollment(@RequestBody Enrollment enrollment){
-        return enrollmentService.saveEnrollment(enrollment);
+    ResponseEntity<Enrollment> saveEnrollment(@RequestBody Enrollment enrollment){
+        Enrollment newEnrollment = enrollmentService.saveEnrollment(enrollment);
+        if(newEnrollment == null){
+            return ResponseEntity.notFound().build();
+        }
+        return new ResponseEntity<>(newEnrollment, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
-    Enrollment editEnrollment(@PathVariable Long id, @RequestBody Enrollment enrollment){
-        return enrollmentService.editEnrollment(id, enrollment);
+    ResponseEntity<Enrollment> editEnrollment(@PathVariable Long id, @RequestBody Enrollment enrollment){
+        Enrollment newEnrollment = enrollmentService.editEnrollment(id, enrollment);
+        if(newEnrollment == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(newEnrollment);
     }
 
     @DeleteMapping(value = "/{id}")
-    boolean deleteEnrollment(@PathVariable Long id){
-        return enrollmentService.deleteEnrollment(id);
+    ResponseEntity<Boolean> deleteEnrollment(@PathVariable Long id){
+        boolean isDeleted = enrollmentService.deleteEnrollment(id);
+        if(!isDeleted){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(value = "/dates/{enrollmentDate}")
-    List<Enrollment> getEnrollmentsByDate(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enrollmentDate){
-        return enrollmentService.getEnrollmentsByDate(enrollmentDate);
+    ResponseEntity<List<Enrollment>> getEnrollmentsByDate(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enrollmentDate){
+        List<Enrollment> enrollments = enrollmentService.getEnrollmentsByDate(enrollmentDate);
+        if(enrollments.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(enrollments);
     }
 
     @GetMapping(value = "/details/{enrollmentId}/courses/{courseId}")
-    EnrollmentCourse getDetailById(@PathVariable Long enrollmentId, @PathVariable Long courseId) {
+    ResponseEntity<EnrollmentCourse> getDetailById(@PathVariable Long enrollmentId, @PathVariable Long courseId) {
         EnrollmentCourseId id = new EnrollmentCourseId(enrollmentId, courseId);
-        return enrollmentService.getDetailById(id);
+        EnrollmentCourse enrollmentCourse = enrollmentService.getDetailById(id);
+        if(enrollmentCourse == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(enrollmentCourse);
     }
 
     @PostMapping(value = "/details")
-    EnrollmentCourse saveDetail(@RequestBody EnrollmentCourse detail) {
-        return enrollmentService.saveDetail(detail);
+    ResponseEntity<EnrollmentCourse> saveDetail(@RequestBody EnrollmentCourse detail) {
+        EnrollmentCourse enrollmentCourse = enrollmentService.saveDetail(detail);
+        if(enrollmentCourse == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(enrollmentCourse);
     }
 
     @PostMapping(value = "/details/batch")
-    List<EnrollmentCourse> saveDetails(@RequestBody List<EnrollmentCourse> details) {
-        return enrollmentService.saveDetails(details);
+    ResponseEntity<List<EnrollmentCourse>> saveDetails(@RequestBody List<EnrollmentCourse> details) {
+        List<EnrollmentCourse> enrollmentCourses = enrollmentService.saveDetails(details);
+        if(enrollmentCourses.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(enrollmentCourses);
     }
 
     @DeleteMapping(value = "/details/{enrollmentId}/courses/{courseId}")
-    boolean deleteDetailById(@PathVariable Long enrollmentId, @PathVariable Long courseId) {
-        return enrollmentService.deleteDetailById(new EnrollmentCourseId(enrollmentId, courseId));
+    ResponseEntity<Boolean> deleteDetailById(@PathVariable Long enrollmentId, @PathVariable Long courseId) {
+        boolean isDeleted = enrollmentService.deleteDetailById(new EnrollmentCourseId(enrollmentId, courseId));
+        if(!isDeleted){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
