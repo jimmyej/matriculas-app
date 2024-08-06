@@ -3,7 +3,7 @@ package com.courses.services.impls;
 import com.courses.entities.Course;
 import com.courses.repositories.CourseRepository;
 import com.courses.services.CourseService;
-import com.courses.utils.CommonConstants;
+import com.courses.enums.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

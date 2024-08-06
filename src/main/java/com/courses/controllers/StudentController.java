@@ -31,7 +31,12 @@ public class StudentController {
         consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }
     )
     @ResponseBody
-    ResponseEntity<Page<Student>> getAllStudents(@PathVariable(required = false) String filters, @PathVariable(required = false) String sorts, @PathVariable Integer page, @PathVariable Integer size){
+    ResponseEntity<Page<Student>> getAllStudents(
+            @PathVariable(required = false) String filters,
+            @PathVariable(required = false) String sorts,
+            @PathVariable(value = "0") Integer page,
+            @PathVariable(value = "10") Integer size){
+
         Page<Student> students =  studentService.getAllStudents(filters, sorts, page, size);
         if(students.get().findAny().isEmpty()){
             return ResponseEntity.noContent().build();
@@ -57,7 +62,6 @@ public class StudentController {
         return ResponseEntity.ok().body(student);
     }
 
-    //TODO refactor this endpoint
     @PostMapping(value = "")
     ResponseEntity<Student> saveStudent(@RequestBody Student student){
         Student newStudent = studentService.saveStudent(student);
@@ -67,7 +71,6 @@ public class StudentController {
         return new ResponseEntity<>(newStudent, HttpStatus.CREATED);
     }
 
-    //TODO refactor this endpoint
     @PutMapping(value = "/{id}")
     ResponseEntity<Student> editStudent(@PathVariable Long id, @RequestBody Student student){
         Student newStudent = studentService.editStudent(id, student);

@@ -47,3 +47,9 @@ To collect the code coverage run the following Maven command:
 mvn clean verify
 ```
 
+To scan the code coverage with SonarQube run the following Maven command:
+
+```sh
+mvn clean verify sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=TOKEN_GENERATED
+```
+

@@ -3,7 +3,6 @@ package com.courses.controllers;
 import com.courses.entities.Course;
 import com.courses.repositories.CourseRepository;
 import com.courses.services.impls.CourseServiceImpl;
-import com.courses.utils.CommonConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;

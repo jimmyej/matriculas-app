@@ -16,6 +16,26 @@
 	<properties>
 		<java.version>11</java.version>
 		<swagger.version>2.9.2</swagger.version>
+
+		<!-- Sonar properties -->
+		<sonar.projectKey>enrollment-management-app</sonar.projectKey>
+		<sonar.projectName>matriculas-app</sonar.projectName>
+		<sonar.projectVersion>1.0</sonar.projectVersion>
+		<sonar.sources>src/main/java</sonar.sources>
+		<sonar.tests>src/test/java</sonar.tests>
+		<sonar.exclusions>
+			**/EnrollmentManagementAppApplication.java,
+			**/CloudinaryServiceImpl.java,
+			**/services/specs/**,
+			**/entities/**,
+			**/dtos/**,
+			**/enums/**,
+			**/handlers/**,
+			**/configs/**,
+			**/configs/**,
+			**/utils/**
+		</sonar.exclusions>
+		<!-- <sonar.test.exclusions></sonar.test.exclusions> -->
 	</properties>
 	<dependencies>
 		<dependency>
@@ -74,6 +94,15 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.9.1.2184</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -89,6 +118,8 @@
 						<exclude>com/courses/services/impls/CloudinaryServiceImpl.class</exclude>
 						<exclude>com/courses/services/specs/**</exclude>
 						<exclude>com/courses/entities/**</exclude>
+						<exclude>com/courses/dtos/**</exclude>
+						<exclude>com/courses/enums/**</exclude>
 						<exclude>com/courses/configs/**</exclude>
 						<exclude>com/courses/handlers/**</exclude>
 						<exclude>com/courses/utils/**</exclude>

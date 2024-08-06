@@ -1,4 +1,4 @@
-package com.courses.utils;
+package com.courses.enums;
 
 public enum CommonConstants {
     ACTIVATED,

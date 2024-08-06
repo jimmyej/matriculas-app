@@ -6,7 +6,7 @@ import com.courses.entities.ids.EnrollmentCourseId;
 import com.courses.repositories.EnrollmentCourseRepository;
 import com.courses.repositories.EnrollmentRepository;
 import com.courses.services.EnrollmentService;
-import com.courses.utils.CommonConstants;
+import com.courses.enums.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

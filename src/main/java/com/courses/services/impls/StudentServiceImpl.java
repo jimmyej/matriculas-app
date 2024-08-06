@@ -6,7 +6,7 @@ import com.courses.services.CloudinaryService;
 import com.courses.services.StudentService;
 import com.courses.services.specs.CommonSpecification;
 import com.courses.services.specs.SpecificationHelper;
-import com.courses.utils.CommonConstants;
+import com.courses.enums.CommonConstants;
 import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
