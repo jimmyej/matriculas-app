@@ -48,9 +48,9 @@ public class StudentController {
     ResponseEntity<Object> getStudents(@RequestParam(required=false) String status){
         List<Student> students = studentService.getStudents(status);
         if(students.isEmpty()){
-            return ResponseEntity.noContent().build();
+            return ResponseHandler.generateResponse(students, "Users no found", HttpStatus.NO_CONTENT);
         }
-        return ResponseHandler.generateResponse(students, "Success", HttpStatus.OK);
+        return ResponseHandler.generateResponse(students, "Getting users successfully", HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
