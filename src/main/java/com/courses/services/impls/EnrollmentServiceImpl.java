@@ -12,16 +12,19 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class EnrollmentServiceImpl implements EnrollmentService {
 
-    @Autowired
     EnrollmentRepository enrollmentRepository;
+    EnrollmentCourseRepository enrollmentCourseRepository;
 
     @Autowired
-    EnrollmentCourseRepository enrollmentCourseRepository;
+    EnrollmentServiceImpl(EnrollmentRepository enrollmentRepository, EnrollmentCourseRepository enrollmentCourseRepository){
+        this.enrollmentRepository = enrollmentRepository;
+        this.enrollmentCourseRepository = enrollmentCourseRepository;
+    }
 
     public List<Enrollment> getEnrollments(String status) {
         if(status != null) {
@@ -35,7 +38,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Enrollment getEnrollmentById(Long id) {
         boolean existsById = enrollmentRepository.existsById(id);
         if(existsById){
-            return enrollmentRepository.findById(id).get();
+            Optional<Enrollment> enrollment = enrollmentRepository.findById(id);
+            if(enrollment.isPresent()){
+                return enrollment.get();
+            }
         }
         return null;
     }
@@ -60,10 +66,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public boolean deleteEnrollment(Long id) {
         boolean deleted = false;
         if(enrollmentRepository.existsById(id)){
-            Enrollment enrollment = enrollmentRepository.findById(id).get();
-            enrollment.setStatus(false);
-            enrollmentRepository.save(enrollment);
-            deleted = true;
+            Optional<Enrollment> enrollment = enrollmentRepository.findById(id);
+            if(enrollment.isPresent()){
+                enrollment.get().setStatus(false);
+                enrollmentRepository.save(enrollment.get());
+                deleted = true;
+            }
         }
         return deleted;
     }
@@ -75,7 +83,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public EnrollmentCourse getDetailById(EnrollmentCourseId id) {
         boolean existsById = enrollmentCourseRepository.existsById(id);
         if(existsById){
-            return enrollmentCourseRepository.findById(id).get();
+            Optional<EnrollmentCourse> enrollmentCourse = enrollmentCourseRepository.findById(id);
+            if(enrollmentCourse.isPresent()){
+                return enrollmentCourse.get();
+            }
         }
         return null;
     }
@@ -89,7 +100,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     public List<EnrollmentCourse> saveDetails(List<EnrollmentCourse> details) {
-        List<EnrollmentCourse> filteredDetails = details.stream().filter(d -> !enrollmentCourseRepository.existsById(d.getId())).collect(Collectors.toList());
+        List<EnrollmentCourse> filteredDetails = details.stream().filter(d -> !enrollmentCourseRepository.existsById(d.getId())).toList();
         if(!filteredDetails.isEmpty()){
             return enrollmentCourseRepository.saveAll(filteredDetails);
         }

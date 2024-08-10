@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.0</version>
+		<version>3.3.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.courses</groupId>
@@ -13,8 +13,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>enrollment-management-app</name>
 	<description>Enrollment management API</description>
+
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<swagger.version>2.9.2</swagger.version>
 
 		<!-- Sonar properties -->
@@ -23,6 +24,7 @@
 		<sonar.projectVersion>1.0</sonar.projectVersion>
 		<sonar.sources>src/main/java</sonar.sources>
 		<sonar.tests>src/test/java</sonar.tests>
+		<sonar.tests.exclusions>**/EnrollmentManagementAppApplicationTests.java,</sonar.tests.exclusions>
 		<sonar.exclusions>
 			**/EnrollmentManagementAppApplication.java,
 			**/CloudinaryServiceImpl.java,
@@ -35,8 +37,8 @@
 			**/configs/**,
 			**/utils/**
 		</sonar.exclusions>
-		<!-- <sonar.test.exclusions></sonar.test.exclusions> -->
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

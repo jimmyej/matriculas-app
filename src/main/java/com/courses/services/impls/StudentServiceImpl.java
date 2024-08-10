@@ -24,11 +24,14 @@ import java.util.Optional;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-    @Autowired
     StudentRepository studentRepository;
+    CloudinaryService cloudinaryService;
 
     @Autowired
-    CloudinaryService cloudinaryService;
+    StudentServiceImpl(StudentRepository studentRepository, CloudinaryService cloudinaryService){
+        this.studentRepository = studentRepository;
+        this.cloudinaryService = cloudinaryService;
+    }
 
     public Page<Student> getAllStudents(String filters, String sorts, Integer page, Integer size) {
         CommonSpecification<Student> specifications = SpecificationHelper.makeSpecifications(filters);
@@ -52,7 +55,10 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentById(Long id) {
         boolean existsById = studentRepository.existsById(id);
         if(existsById) {
-            return studentRepository.findById(id).get();
+            Optional<Student> student = studentRepository.findById(id);
+            if(student.isPresent()){
+                return student.get();
+            }
         }
         return null;
     }
@@ -78,10 +84,12 @@ public class StudentServiceImpl implements StudentService {
     public boolean deleteStudent(Long id) {
         boolean deleted = false;
         if(studentRepository.existsById(id)){
-            Student student = studentRepository.findById(id).get();
-            student.setStatus(false);
-            studentRepository.save(student);
-            deleted = true;
+            Optional<Student> student = studentRepository.findById(id);
+            if(student.isPresent()){
+                student.get().setStatus(false);
+                studentRepository.save(student.get());
+                deleted = true;
+            }
         }
         return deleted;
     }
@@ -100,7 +108,7 @@ public class StudentServiceImpl implements StudentService {
         if (student.isPresent()) {
             try {
                 cloudinaryService.delete(publicId);
-                Map uploadResult = cloudinaryService.upload(image);
+                Map<String, Object> uploadResult = cloudinaryService.upload(image);
                 JSONObject json = new JSONObject(uploadResult);
                 String url = json.getString("url");
                 String publicIdValue = json.getString("public_id");

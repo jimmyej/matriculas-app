@@ -17,8 +17,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/enrollments")
 public class EnrollmentController {
+
+    EnrollmentService enrollmentService;
+
     @Autowired
-    private EnrollmentService enrollmentService;
+    EnrollmentController(EnrollmentService enrollmentService){
+        this.enrollmentService = enrollmentService;
+    }
 
     @GetMapping(value = "")
     ResponseEntity<List<Enrollment>> getEnrollments(@RequestParam(required=false) String status){

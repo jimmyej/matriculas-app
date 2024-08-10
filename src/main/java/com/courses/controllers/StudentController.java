@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/v1/students")
 public class StudentController {
 
-    @Autowired
     StudentService studentService;
+
+    @Autowired
+    StudentController(StudentService studentService){
+        this.studentService = studentService;
+    }
 
     @GetMapping(
         value = {
@@ -30,12 +34,12 @@ public class StudentController {
         },
         consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }
     )
-    @ResponseBody
+
     ResponseEntity<Page<Student>> getAllStudents(
             @PathVariable(required = false) String filters,
             @PathVariable(required = false) String sorts,
-            @PathVariable(value = "0") Integer page,
-            @PathVariable(value = "10") Integer size){
+            @PathVariable Integer page,
+            @PathVariable Integer size){
 
         Page<Student> students =  studentService.getAllStudents(filters, sorts, page, size);
         if(students.get().findAny().isEmpty()){
