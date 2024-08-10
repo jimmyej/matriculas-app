@@ -6,14 +6,14 @@ This Microservice contains the following endpoints:
 - Enrollments
 
 ### Tools
-- Java 11
-- Spring boot 2.7.0
+- Java 17
+- Spring boot 3.3.1
 - Postgres DB
 - Swagger documentation 2.9.2
 - Jacoco code coverage
 
 ### Setup
-1. Create a application-local.yml file and add the following configuration.
+1. Create an application-local.yml file and add the following configuration.
     
     ```sh
     spring:
@@ -45,5 +45,14 @@ To collect the code coverage run the following Maven command:
 
 ```sh
 mvn clean verify
+```
+
+To scan the code coverage with SonarQube run the following Maven command:
+
+```sh
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=enrollment-management-app \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=TOKEN_GENERATED
 ```
 

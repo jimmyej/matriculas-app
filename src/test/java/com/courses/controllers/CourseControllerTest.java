@@ -3,7 +3,6 @@ package com.courses.controllers;
 import com.courses.entities.Course;
 import com.courses.repositories.CourseRepository;
 import com.courses.services.impls.CourseServiceImpl;
-import com.courses.utils.CommonConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -26,13 +25,12 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CourseController.class)
 @Import(CourseServiceImpl.class)
-public class CourseControllerTest {
+class CourseControllerTest {
     @Autowired
     MockMvc mockMvc;
 
@@ -59,7 +57,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourses_notFound() throws Exception {
+    void getCourses_notFound() throws Exception {
         Mockito.when(courseRepository.findByOrderByUpdatedAtDesc()).thenReturn(List.of());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -69,7 +67,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourses_success() throws Exception {
+    void getCourses_success() throws Exception {
         List<Course> courses = new ArrayList<>(Arrays.asList(course1, course2, course3));
 
         Mockito.when(courseRepository.findByOrderByUpdatedAtDesc()).thenReturn(courses);
@@ -82,7 +80,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getActivatedCourses_success() throws Exception {
+    void getActivatedCourses_success() throws Exception {
         Mockito.when(courseRepository.findByStatusOrderByUpdatedAtDesc(true)).thenReturn(List.of(course1, course2, course3));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -92,7 +90,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getInactivatedCourses_success() throws Exception {
+    void getInactivatedCourses_success() throws Exception {
         Mockito.when(courseRepository.findByStatusOrderByUpdatedAtDesc(false)).thenReturn(List.of(course4));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -102,9 +100,9 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourseById_success() throws Exception {
-        Mockito.when(courseRepository.existsById(eq(1L))).thenReturn(true);
-        Mockito.when(courseRepository.findById(eq(1L))).thenReturn(Optional.of(course1));
+    void getCourseById_success() throws Exception {
+        Mockito.when(courseRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(courseRepository.findById(1L)).thenReturn(Optional.of(course1));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/courses/1")
@@ -115,8 +113,9 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourseById_notFound() throws Exception {
-        Mockito.when(courseRepository.existsById(eq(1L))).thenReturn(false);
+    void getCourseById_notPresent() throws Exception {
+        Mockito.when(courseRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(courseRepository.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/courses/1")
@@ -125,8 +124,18 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourse_by_acronym_success() throws Exception {
-        Mockito.when(courseRepository.findByAcronym(eq("JDK"))).thenReturn(course3);
+    void getCourseById_notFound() throws Exception {
+        Mockito.when(courseRepository.existsById(1L)).thenReturn(false);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/v1/courses/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getCourse_by_acronym_success() throws Exception {
+        Mockito.when(courseRepository.findByAcronym("JDK")).thenReturn(course3);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/courses/acronym/JDK")
@@ -137,8 +146,8 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void getCourse_by_acronym_notFound() throws Exception {
-        Mockito.when(courseRepository.findByAcronym(eq("JDK"))).thenReturn(null);
+    void getCourse_by_acronym_notFound() throws Exception {
+        Mockito.when(courseRepository.findByAcronym("JDK")).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/courses/acronym/JDK")
@@ -147,10 +156,10 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void saveCourse_success() throws Exception {
+    void saveCourse_success() throws Exception {
         Course newCourse = getCourse();
 
-        Mockito.when(courseRepository.existsByName(eq(newCourse.getName()))).thenReturn(false);
+        Mockito.when(courseRepository.existsByName(newCourse.getName())).thenReturn(false);
         Mockito.when(courseRepository.save(any())).thenReturn(newCourse);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/v1/courses")
@@ -165,10 +174,10 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void saveCourse_foundExistingCourse() throws Exception {
+    void saveCourse_foundExistingCourse() throws Exception {
         Course newCourse = getCourse();
 
-        Mockito.when(courseRepository.existsByName(eq(newCourse.getName()))).thenReturn(true);
+        Mockito.when(courseRepository.existsByName(newCourse.getName())).thenReturn(true);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/v1/courses")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -180,10 +189,10 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void editCourse_success() throws Exception {
+    void editCourse_success() throws Exception {
         Course newCourse = new Course(5L,"Office3","OF",LocalDate.of(2022,8,3),LocalDateTime.now(),true);
 
-        Mockito.when(courseRepository.existsById(eq(5L))).thenReturn(true);
+        Mockito.when(courseRepository.existsById(5L)).thenReturn(true);
         Mockito.when(courseRepository.save(any())).thenReturn(newCourse);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/v1/courses/5")
@@ -198,7 +207,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void editCourse_fail() throws Exception {
+    void editCourse_fail() throws Exception {
         Course newCourse = new Course(5L,"Office3","OF",LocalDate.of(2022,8,3),LocalDateTime.now(),true);
 
         Mockito.when(courseRepository.existsById(5L)).thenReturn(false);
@@ -213,11 +222,11 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void deleteCourse_success() throws Exception {
+    void deleteCourse_success() throws Exception {
         Course course = new Course(5L,"Office3","OF",LocalDate.of(2022,8,3),LocalDateTime.now(),true);
-        Mockito.when(courseRepository.existsById(eq(5L))).thenReturn(true);
-        Mockito.when(courseRepository.findById(eq(5L))).thenReturn(Optional.of(course));
-        Mockito.when(courseRepository.findById(any())).thenReturn(Optional.of(course));
+        Mockito.when(courseRepository.existsById(5L)).thenReturn(true);
+        Mockito.when(courseRepository.findById(5L)).thenReturn(Optional.of(course));
+        Mockito.when(courseRepository.save(any())).thenReturn(course);
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/v1/courses/5")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -225,8 +234,18 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void deleteCourse_fail() throws Exception {
-        Mockito.when(courseRepository.existsById(eq(8L))).thenReturn(false);
+    void deleteCourse_notPresent() throws Exception {
+       Mockito.when(courseRepository.existsById(5L)).thenReturn(true);
+        Mockito.when(courseRepository.findById(5L)).thenReturn(Optional.empty());
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/v1/courses/5")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteCourse_fail() throws Exception {
+        Mockito.when(courseRepository.existsById(8L)).thenReturn(false);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/v1/courses/8")

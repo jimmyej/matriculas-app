@@ -10,13 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Map;
 
+@SuppressWarnings("unchecked,unused")
 @Service
 public class CloudinaryServiceImpl implements CloudinaryService {
 
-    @Autowired
-    private Cloudinary cloudinary;
+    Cloudinary cloudinary;
 
-    public Map upload(MultipartFile file) throws IOException {
+    @Autowired
+    public CloudinaryServiceImpl(Cloudinary cloudinary){
+        this.cloudinary = cloudinary;
+    }
+
+    public Map<String, Object>  upload(MultipartFile file) throws IOException {
         return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
     }
 

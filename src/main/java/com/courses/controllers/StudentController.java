@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/v1/students")
 public class StudentController {
 
-    @Autowired
     StudentService studentService;
+
+    @Autowired
+    StudentController(StudentService studentService){
+        this.studentService = studentService;
+    }
 
     @GetMapping(
         value = {
@@ -30,8 +34,13 @@ public class StudentController {
         },
         consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }
     )
-    @ResponseBody
-    ResponseEntity<Page<Student>> getAllStudents(@PathVariable(required = false) String filters, @PathVariable(required = false) String sorts, @PathVariable Integer page, @PathVariable Integer size){
+
+    ResponseEntity<Page<Student>> getAllStudents(
+            @PathVariable(required = false) String filters,
+            @PathVariable(required = false) String sorts,
+            @PathVariable Integer page,
+            @PathVariable Integer size){
+
         Page<Student> students =  studentService.getAllStudents(filters, sorts, page, size);
         if(students.get().findAny().isEmpty()){
             return ResponseEntity.noContent().build();
@@ -43,9 +52,9 @@ public class StudentController {
     ResponseEntity<Object> getStudents(@RequestParam(required=false) String status){
         List<Student> students = studentService.getStudents(status);
         if(students.isEmpty()){
-            return ResponseEntity.noContent().build();
+            return ResponseHandler.generateResponse(students, "Users no found", HttpStatus.NO_CONTENT);
         }
-        return ResponseHandler.generateResponse(students, "Success", HttpStatus.OK);
+        return ResponseHandler.generateResponse(students, "Getting users successfully", HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
@@ -57,7 +66,6 @@ public class StudentController {
         return ResponseEntity.ok().body(student);
     }
 
-    //TODO refactor this endpoint
     @PostMapping(value = "")
     ResponseEntity<Student> saveStudent(@RequestBody Student student){
         Student newStudent = studentService.saveStudent(student);
@@ -67,7 +75,6 @@ public class StudentController {
         return new ResponseEntity<>(newStudent, HttpStatus.CREATED);
     }
 
-    //TODO refactor this endpoint
     @PutMapping(value = "/{id}")
     ResponseEntity<Student> editStudent(@PathVariable Long id, @RequestBody Student student){
         Student newStudent = studentService.editStudent(id, student);

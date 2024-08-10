@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.0</version>
+		<version>3.3.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.courses</groupId>
@@ -13,10 +13,32 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>enrollment-management-app</name>
 	<description>Enrollment management API</description>
+
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<swagger.version>2.9.2</swagger.version>
+
+		<!-- Sonar properties -->
+		<sonar.projectKey>enrollment-management-app</sonar.projectKey>
+		<sonar.projectName>matriculas-app</sonar.projectName>
+		<sonar.projectVersion>1.0</sonar.projectVersion>
+		<sonar.sources>src/main/java</sonar.sources>
+		<sonar.tests>src/test/java</sonar.tests>
+		<sonar.tests.exclusions>**/EnrollmentManagementAppApplicationTests.java,</sonar.tests.exclusions>
+		<sonar.exclusions>
+			**/EnrollmentManagementAppApplication.java,
+			**/CloudinaryServiceImpl.java,
+			**/services/specs/**,
+			**/entities/**,
+			**/dtos/**,
+			**/enums/**,
+			**/handlers/**,
+			**/configs/**,
+			**/configs/**,
+			**/utils/**
+		</sonar.exclusions>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -74,6 +96,15 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.9.1.2184</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -89,6 +120,8 @@
 						<exclude>com/courses/services/impls/CloudinaryServiceImpl.class</exclude>
 						<exclude>com/courses/services/specs/**</exclude>
 						<exclude>com/courses/entities/**</exclude>
+						<exclude>com/courses/dtos/**</exclude>
+						<exclude>com/courses/enums/**</exclude>
 						<exclude>com/courses/configs/**</exclude>
 						<exclude>com/courses/handlers/**</exclude>
 						<exclude>com/courses/utils/**</exclude>

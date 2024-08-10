@@ -2,11 +2,9 @@ package com.courses.entities;
 
 
 import com.courses.entities.ids.EnrollmentCourseId;
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Getter
