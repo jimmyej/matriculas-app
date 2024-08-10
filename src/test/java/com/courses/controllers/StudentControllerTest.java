@@ -70,7 +70,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getAllStudents_success() throws Exception {
+    void getAllStudents_success() throws Exception {
         List<Student> students = new ArrayList<>(Arrays.asList(student1, student2, student3));
 
         Mockito.when(studentRepository.findByOrderByUpdatedAtDesc()).thenReturn(students);
@@ -85,7 +85,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getAllStudents_noContent() throws Exception {
+    void getAllStudents_noContent() throws Exception {
         Mockito.when(studentRepository.findByOrderByUpdatedAtDesc()).thenReturn(Lists.list());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -96,7 +96,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getActivatedStudents_success() throws Exception {
+    void getActivatedStudents_success() throws Exception {
         List<Student> students = new ArrayList<>(Arrays.asList(student1, student2, student3));
 
         Mockito.when(studentRepository.findByStatusOrderByUpdatedAtDesc(anyBoolean())).thenReturn(students);
@@ -111,7 +111,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudentsPaginated_success() throws Exception {
+    void getStudentsPaginated_success() throws Exception {
         List<Student> students = new ArrayList<>(Arrays.asList(student1, student2, student3));
 
         Mockito.when(studentRepository.findAll(any(), Mockito.any(PageRequest.class))).thenReturn(new PageImpl<>(students));
@@ -130,7 +130,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudentsPaginated_noContent() throws Exception {
+    void getStudentsPaginated_noContent() throws Exception {
         Mockito.when(studentRepository.findAll(any(), Mockito.any(PageRequest.class))).thenReturn(new PageImpl<>(List.of()));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -142,9 +142,9 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudent_success() throws Exception {
-        Mockito.when(studentRepository.existsById(eq(1L))).thenReturn(true);
-        Mockito.when(studentRepository.findById(eq(1L))).thenReturn(Optional.ofNullable(student1));
+    void getStudent_success() throws Exception {
+        Mockito.when(studentRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(studentRepository.findById(1L)).thenReturn(Optional.of(student1));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/students/1")
@@ -155,8 +155,9 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudent_notFound() throws Exception {
-        Mockito.when(studentRepository.existsById(eq(1L))).thenReturn(false);
+    void getStudent_notPresent() throws Exception {
+        Mockito.when(studentRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(studentRepository.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/students/1")
@@ -165,9 +166,19 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudent_by_docNumber_success() throws Exception {
+    void getStudent_notFound() throws Exception {
+        Mockito.when(studentRepository.existsById(1L)).thenReturn(false);
 
-        Mockito.when(studentRepository.findByDocNumber(eq("12345678"))).thenReturn(student1);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/v1/students/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getStudent_by_docNumber_success() throws Exception {
+
+        Mockito.when(studentRepository.findByDocNumber("12345678")).thenReturn(student1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/students/docs/numbers/12345678")
@@ -178,9 +189,9 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudent_by_docNumber_notFound() throws Exception {
+    void getStudent_by_docNumber_notFound() throws Exception {
 
-        Mockito.when(studentRepository.findByDocNumber(eq("12345678"))).thenReturn(null);
+        Mockito.when(studentRepository.findByDocNumber("12345678")).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/students/docs/numbers/12345678")
@@ -189,10 +200,10 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudents_by_docType_success() throws Exception {
+    void getStudents_by_docType_success() throws Exception {
         List<Student> students = new ArrayList<>(Arrays.asList(student1, student2, student3));
 
-        Mockito.when(studentRepository.findByDocType(eq("DNI"))).thenReturn(students);
+        Mockito.when(studentRepository.findByDocType("DNI")).thenReturn(students);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/students/docs/types/DNI")
@@ -203,8 +214,8 @@ class StudentControllerTest {
     }
 
     @Test
-    public void getStudents_by_docType_noContent() throws Exception {
-        Mockito.when(studentRepository.findByDocType(eq("DNI"))).thenReturn(List.of());
+    void getStudents_by_docType_noContent() throws Exception {
+        Mockito.when(studentRepository.findByDocType("DNI")).thenReturn(List.of());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/v1/students/docs/types/DNI")
@@ -213,7 +224,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void saveStudent_success() throws Exception {
+    void saveStudent_success() throws Exception {
         Student newStudent = getStudent();
 
         Mockito.when(studentRepository.save(any())).thenReturn(student1);
@@ -229,12 +240,11 @@ class StudentControllerTest {
                 .andExpect(jsonPath("$.firstName", Matchers.is("Angel")));
     }
 
-    @Test
-    public void saveStudent_notFound() throws Exception {
+    void saveStudent_notFound(boolean existsDocNumber, boolean existsEmail) throws Exception {
         Student newStudent = getStudent();
 
-        Mockito.when(studentRepository.existsByDocNumber(any())).thenReturn(false);
-        Mockito.when(studentRepository.existsByEmail(any())).thenReturn(false);
+        Mockito.when(studentRepository.existsByDocNumber(any())).thenReturn(existsDocNumber);
+        Mockito.when(studentRepository.existsByEmail(any())).thenReturn(existsEmail);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/v1/students")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -246,55 +256,22 @@ class StudentControllerTest {
     }
 
     @Test
-    public void saveStudent_ExistingDocNumberAndEmail() throws Exception {
-        Student newStudent = getStudent();
-
-        Mockito.when(studentRepository.existsByDocNumber(any())).thenReturn(true);
-        Mockito.when(studentRepository.existsByEmail(any())).thenReturn(true);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/v1/students")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(newStudent));
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isNotFound());
+    void saveStudent_notFound_existsDocNumberAndExistsEmail() throws Exception {
+        saveStudent_notFound(true,true);
     }
 
     @Test
-    public void saveStudent_ExistingDocNumber() throws Exception {
-        Student newStudent = getStudent();
-
-        Mockito.when(studentRepository.existsByDocNumber(any())).thenReturn(true);
-        Mockito.when(studentRepository.existsByEmail(any())).thenReturn(false);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/v1/students")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(newStudent));
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isNotFound());
+    void saveStudent_notFound_existsDocNumberButNotExistsEmail() throws Exception {
+        saveStudent_notFound(true,false);
     }
 
     @Test
-    public void saveStudent_ExistingEmail() throws Exception {
-        Student newStudent = getStudent();
-
-        Mockito.when(studentRepository.existsByDocNumber(any())).thenReturn(false);
-        Mockito.when(studentRepository.existsByEmail(any())).thenReturn(true);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/v1/students")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(newStudent));
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isNotFound());
+    void saveStudent_notFound_notExistsDocNumberButExistsEmail() throws Exception {
+        saveStudent_notFound(false,true);
     }
 
     @Test
-    public void editStudent_success() throws Exception {
+    void editStudent_success() throws Exception {
         Student editedStudent = new Student(5L,"Test", "Test", "DNI", "22222222", LocalDate.of(2020, Calendar.JUNE,9), "test.test@gmail.com", true, LocalDateTime.now(), LocalDateTime.now(), "", "");
 
         Mockito.when(studentRepository.existsById(5L)).thenReturn(true);
@@ -310,7 +287,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void editStudent_notFound() throws Exception {
+    void editStudent_notFound() throws Exception {
         Student editedStudent = new Student(5L,"Test", "Test", "DNI", "22222222", LocalDate.of(2020, Calendar.JUNE,9), "test.test@gmail.com", true, LocalDateTime.now(), LocalDateTime.now(), "", "");
 
         Mockito.when(studentRepository.existsById(5L)).thenReturn(false);
@@ -323,10 +300,10 @@ class StudentControllerTest {
     }
 
     @Test
-    public void editStudent_fail() throws Exception {
+    void editStudent_fail() throws Exception {
         Student newStudent = new Student(5L,"Test", "Test", "DNI", "22222222", LocalDate.of(2020, Calendar.JUNE,9), "test.test@gmail.com", true, LocalDateTime.now(), LocalDateTime.now(), "", "");
 
-        Mockito.when(studentRepository.existsById(eq(5L))).thenReturn(false);
+        Mockito.when(studentRepository.existsById(5L)).thenReturn(false);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/v1/students/5")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -338,10 +315,12 @@ class StudentControllerTest {
     }
 
     @Test
-    public void deleteStudent_success() throws Exception {
+    void deleteStudent_success() throws Exception {
 
-        Mockito.when(studentRepository.existsById(eq(3L))).thenReturn(true);
-        Mockito.when(studentRepository.findById(eq(3L))).thenReturn(Optional.of(student3));
+        student3.setStatus(false);
+        Mockito.when(studentRepository.existsById(3L)).thenReturn(true);
+        Mockito.when(studentRepository.findById(3L)).thenReturn(Optional.of(student3));
+        Mockito.when(studentRepository.save(any())).thenReturn(student3);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/v1/students/3")
@@ -350,7 +329,20 @@ class StudentControllerTest {
     }
 
     @Test
-    public void deleteStudent_fail() throws Exception {
+    void deleteStudent_notPresent() throws Exception {
+
+        student3.setStatus(false);
+        Mockito.when(studentRepository.existsById(3L)).thenReturn(true);
+        Mockito.when(studentRepository.findById(3L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/v1/students/3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteStudent_fail() throws Exception {
 
         Mockito.when(studentRepository.existsById(anyLong())).thenReturn(false);
 
@@ -360,10 +352,56 @@ class StudentControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    public void uploadStudentPhotoNewPublicId_success() throws Exception {
+    void uploadStudentPhoto(Student student, boolean existsPhoto) throws Exception {
+        String sufixPath = "", publicId = "123456789";
         MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("url", "http://clouddinary.com/123456789.png");
+        resultMap.put("public_id", publicId);
+
+        Mockito.when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student));
+        if(existsPhoto){
+            Mockito.doNothing().when(cloudinaryService).delete(publicId);
+            sufixPath = "/"+publicId;
+        }
+        Mockito.when(cloudinaryService.upload(firstFile)).thenReturn(resultMap);
+        Mockito.when(studentRepository.save(any())).thenReturn(student);
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.multipart("/v1/students/"+student.getId().intValue()+"/upload"+sufixPath)
+                .file(firstFile);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void uploadStudentPhotoNewPublicId_success() throws Exception {
+        uploadStudentPhoto(student5, false);
+    }
+
+    @Test
+    void uploadStudentExistingPhoto_success() throws Exception {
+        uploadStudentPhoto(student4, true);
+    }
+
+    @Test
+    void uploadStudentPhoto_notFound() throws Exception {
+
+        MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
+
+        Mockito.when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.multipart("/v1/students/4/upload")
+                .file(firstFile);
+
+        mockMvc.perform(mockRequest)
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void uploadStudentPhoto_nullPublicId() throws Exception {
+        MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
+        Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("url", "http://clouddinary.com/123456789.png");
         resultMap.put("public_id", "123456789");
 
@@ -379,59 +417,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void uploadStudentExistingPhoto_success() throws Exception {
-
-        MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
-        Map<String, String> mapImage = new HashMap<>();
-        mapImage.put("url", "http://clouddinary.com/123456789.png");
-        mapImage.put("public_id", "123456789");
-
-        Mockito.when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student4));
-        Mockito.doNothing().when(cloudinaryService).delete("123456789");
-        Mockito.when(cloudinaryService.upload(firstFile)).thenReturn(mapImage);
-        Mockito.when(studentRepository.save(any())).thenReturn(student4);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.multipart("/v1/students/4/upload/123456789")
-                .file(firstFile);
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void uploadStudentPhoto_notFound() throws Exception {
-
-        MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
-
-        Mockito.when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.multipart("/v1/students/4/upload")
-                .file(firstFile);
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void uploadStudentPhoto_nullPublicId() throws Exception {
-        MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("url", "http://clouddinary.com/123456789.png");
-        resultMap.put("public_id", "123456789");
-
-        Mockito.when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student5));
-        Mockito.when(cloudinaryService.upload(firstFile)).thenReturn(resultMap);
-        Mockito.when(studentRepository.save(any())).thenReturn(student5);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.multipart("/v1/students/5/upload/")
-                .file(firstFile);
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void uploadStudentPhotoNewPublicId_throwsException() throws Exception {
+    void uploadStudentPhotoNewPublicId_throwsException() throws Exception {
         MockMultipartFile firstFile = new MockMultipartFile("file", "filename.png", "image/png", "some image".getBytes());
 
         Mockito.when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student5));

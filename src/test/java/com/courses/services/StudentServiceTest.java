@@ -25,14 +25,14 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
-public class StudentServiceTest {
+class StudentServiceTest {
     @Mock
     private StudentRepository studentRepository;
 
     @InjectMocks
     private StudentServiceImpl studentService;
 
-    private Student student;
+    Student student;
 
     Student student1 = new Student(1L,"Angel", "Felix", "DNI", "12345678", LocalDate.of(1999, Calendar.JUNE,9), "angel.felix@gmail.com", true, LocalDateTime.now(), LocalDateTime.now(), "", "" );
     Student student2 = new Student(2L,"Jimmy", "Sanchez", "DNI", "87654321", LocalDate.of(1987, Calendar.FEBRUARY,1), "jimmy.sanchez.@gmail.com", true, LocalDateTime.now(), LocalDateTime.now(), "", "");
@@ -57,7 +57,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void getAllStudentsPaginated_success(){
+    void getAllStudentsPaginated_success(){
         List<Student> students = new ArrayList<>(Arrays.asList(student1, student2, student3));
         Mockito.when(studentRepository.findAll(any(), Mockito.any(PageRequest.class))).thenReturn(new PageImpl<>(students));
 

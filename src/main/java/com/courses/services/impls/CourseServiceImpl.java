@@ -3,17 +3,22 @@ package com.courses.services.impls;
 import com.courses.entities.Course;
 import com.courses.repositories.CourseRepository;
 import com.courses.services.CourseService;
-import com.courses.utils.CommonConstants;
+import com.courses.enums.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseServiceImpl implements CourseService {
 
+    CourseRepository courseRepository;
+
     @Autowired
-    private CourseRepository courseRepository;
+    CourseServiceImpl(CourseRepository courseRepository){
+        this.courseRepository = courseRepository;
+    }
 
     public List<Course> getCourses(String status) {
         if(status != null) {
@@ -27,7 +32,10 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourseById(Long id) {
         boolean exists = courseRepository.existsById(id);
         if(exists){
-            return courseRepository.findById(id).get();
+            Optional<Course> course = courseRepository.findById(id);
+            if(course.isPresent()){
+                return course.get();
+            }
         }
         return null;
     }
@@ -52,10 +60,12 @@ public class CourseServiceImpl implements CourseService {
     public boolean deleteCourse(Long id) {
         boolean deleted = false;
         if(courseRepository.existsById(id)){
-            Course course = courseRepository.findById(id).get();
-            course.setStatus(false);
-            courseRepository.save(course);
-            deleted = true;
+            Optional<Course> course = courseRepository.findById(id);
+            if(course.isPresent()){
+                course.get().setStatus(false);
+                courseRepository.save(course.get());
+                deleted = true;
+            }
         }
         return deleted;
     }
