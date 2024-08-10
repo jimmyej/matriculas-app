@@ -55,4 +55,8 @@ mvn clean verify sonar:sonar \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.login=TOKEN_GENERATED
 ```
-
+### Documentation
+1. To see the api documentation open the following link:
+```http
+http://localhost:8080/api/enroll-management/swagger-ui/index.html
+```

@@ -103,7 +103,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public Student uploadPhoto(Long id, MultipartFile image, String publicId){
-        Student studentWithPhoto = null;
+        Student studentWithPhoto;
         Optional<Student> student = studentRepository.findById(id);
         if (student.isPresent()) {
             try {
